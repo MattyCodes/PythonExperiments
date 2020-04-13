@@ -1,13 +1,13 @@
-import twitter
+from os import environ
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import twitter
 import urllib.parse
 import datetime
 import json
 import descartes
-import pdb
+import pdb # TODO: Remove this dependency.
 import sys
-from os import environ
 
 if len(sys.argv) <= 1:
     raise ValueError('Keyword arguments must be provided.')
@@ -38,5 +38,5 @@ query_string       = 'q=' + keywords_as_params + '&result_type=recent&' \
 # Pending app verification:
 # results = api_connection.GetSearch(raw_query=query_string)
 
-pdb.set_trace()
+pdb.set_trace() # TODO: Remove debuggers.
 
