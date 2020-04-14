@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <title> Python Todo List </title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          <h2> Todo List: </h2>
+          <hr class="separator" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12" id="todo-list-wrapper"></div>
+        <hr class="separator" />
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+          <div class="form-group new-todo-item-form">
+            <label class="ml-2"> New Todo Item: </label>
+            <input type="text" class="form-control" id="new-todo-item-input" placeholder="Do the dishes." />
+            <button type="submit" id="new-todo-item-submit-button" class="mt-2 px-5 btn btn-primary"> Submit </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <style>
+    body, html {
+      background: #F7F7F7;
+      font-family: 'Quicksand', sans-serif;
+      text-align: center;
+      padding-top: 50px;
+      padding-bottom: 50px;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    .separator {
+      width: 75%;
+      border-width: 2px;
+      border-color: #E3E3E3;
+    }
+
+    .new-todo-item-form {
+      width: 70%;
+      margin: 0 auto;
+      margin-top: 15px;
+      text-align: left;
+    }
+  </style>
+
+  <script>
+    const BASE_URL         = 'http://127.0.0.1:5000';
+    const $TODO_ITEM_INPUT = $('#new-todo-item-input');
+
+    $(document).ready(() => {
+      fetchTodoItems();
+      watchTodoItemForm();
+    });
+
+    function watchTodoItemForm() {
+      $('#new-todo-item-submit-button').on('click', (event) => {
+        const itemDescription = $TODO_ITEM_INPUT.val();
+
+        if (itemDescription && itemDescription.length > 0 ) {
+          createTodoItem(itemDescription);
+        } else {
+          alert('You must provide a description for a new todo item!');
+        }
+      });
+    };
+
+    function createTodoItem(itemDescription) {
+      $.ajax({
+        method: 'POST',
+        url: `${BASE_URL}/todo-item`,
+        data: JSON.stringify({ "description": itemDescription }),
+        contentType: 'application/json',
+        dataType: 'json'
+      }).done((result) => {
+        $TODO_ITEM_INPUT.val('');
+        fetchTodoItems();
+      });
+    };
+
+    function fetchTodoItems() {
+      $.ajax({
+        method: 'GET',
+        url: `${BASE_URL}/todo-items`
+      }).done((result) => {
+        listHTML = '';
+
+        result.map((item) => {
+          listHTML += formatItemRow(item);
+        });
+
+        $('#todo-list-wrapper').html(listHTML);
+      });
+    };
+
+    function formatItemRow(item) {
+      return `
+        <div class="row">
+          <div class="col-sm-12 col-md-12 col-lg-12">
+            <b> ${item.id}: </b> <span> ${item.description} </span> 
+          </div>
+        </div>
+      `;
+    };
+  </script>
+</html>

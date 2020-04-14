@@ -3,4 +3,4 @@ from routes import *
 
 # Run the server.
 if __name__ == '__main__':
-    app.run(debug =(APP_ENV is DEV_ENV))
+    app.run(host='0.0.0.0', debug=(APP_ENV is DEV_ENV))
