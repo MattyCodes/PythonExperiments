@@ -3,6 +3,7 @@
     <title> Python Todo List </title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
   </head>
 
@@ -55,6 +56,18 @@
       margin-top: 15px;
       text-align: left;
     }
+
+    .delete-todo-item-icon {
+      cursor: pointer;
+      font-size: 16px;
+      padding-left: 5px;
+      padding-right: 5px;
+      transition: all 200ms;
+    }
+
+    .delete-todo-item-icon:hover, .delete-todo-item-icon:active {
+      transform: scale(1.2);
+    }
   </style>
 
   <script>
@@ -64,7 +77,32 @@
     $(document).ready(() => {
       fetchTodoItems();
       watchTodoItemForm();
+      watchTodoItemDeleteButtons();
     });
+
+    function watchTodoItemDeleteButtons() {
+      $('body').on('click', '.delete-todo-item-icon', (event) => {
+        const itemID = Number($(event.target).siblings('.todo-item-id').text());
+
+        if (itemID) {
+          deleteTodoItem(itemID);
+        } else {
+          alert('Something went wrong, please refresh the page and try again.');
+        }
+      });
+    };
+
+    function deleteTodoItem(itemID) {
+      $.ajax({
+        method: 'DELETE',
+        url: `${BASE_URL}/todo-item`,
+        data: JSON.stringify({ "id": itemID }),
+        contentType: 'application/json',
+        dataType: 'json'
+      }).done((result) => {
+        fetchTodoItems();
+      });
+    };
 
     function watchTodoItemForm() {
       $('#new-todo-item-submit-button').on('click', (event) => {
@@ -96,11 +134,21 @@
         method: 'GET',
         url: `${BASE_URL}/todo-items`
       }).done((result) => {
-        listHTML = '';
+        if (result && result.length > 0) {
+          listHTML = '';
 
-        result.map((item) => {
-          listHTML += formatItemRow(item);
-        });
+          result.map((item) => {
+            listHTML += formatItemRow(item);
+          });
+        } else {
+          listHTML = `
+            <div class="row">
+              <div class="col-sm-12 col-md-12 col-lg-12">
+                <h3 class="my-5"> You have no todo-items! </h3>
+              </div>
+            </div>
+          `;
+        };
 
         $('#todo-list-wrapper').html(listHTML);
       });
@@ -110,7 +158,9 @@
       return `
         <div class="row">
           <div class="col-sm-12 col-md-12 col-lg-12">
-            <b> ${item.id}: </b> <span> ${item.description} </span> 
+            <b class="todo-item-id"> ${item.id} </b>
+            <span> ${item.description} </span>
+            <i class="fa fa-trash delete-todo-item-icon" />
           </div>
         </div>
       `;

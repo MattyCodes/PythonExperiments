@@ -1,3 +1,5 @@
+# NOTE: This is currently on hold until I can get a Twitter app approved.
+
 from os import environ
 import geopandas as gpd
 import matplotlib.pyplot as plt

@@ -32,3 +32,13 @@ def read_todo_items():
     formatted_list = TODO_ITEMS_SCHEMA.dump(all_todo_items)
 
     return jsonify(formatted_list)
+
+# Destroy the specified todo-item.
+@app.route('/todo-item', methods=['DELETE'])
+def destroy_todo_item():
+    todo_item = TodoItem.query.filter_by(id=request.json['id'])
+
+    todo_item.delete()
+    db.session.commit()
+
+    return jsonify({ 'success': 'true' })
