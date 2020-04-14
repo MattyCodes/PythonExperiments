@@ -12,10 +12,11 @@ import sys
 if len(sys.argv) <= 1:
     raise ValueError('Keyword arguments must be provided.')
 
-CONSUMER_KEY        = environ.get('TWITTER_CONSUMER_KEY')
-CONSUMER_SECRET     = environ.get('TWITTER_CONSUMER_SECRET')
-ACCESS_TOKEN_KEY    = environ.get('TWITTER_ACCESS_TOKEN_KEY')
-ACCESS_TOKEN_SECRET = environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+CONSUMER_KEY         = environ.get('TWITTER_CONSUMER_KEY')
+CONSUMER_SECRET      = environ.get('TWITTER_CONSUMER_SECRET')
+ACCESS_TOKEN_KEY     = environ.get('TWITTER_ACCESS_TOKEN_KEY')
+ACCESS_TOKEN_SECRET  = environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+FILENAME_FOR_RESULTS = 'mapped_results.png'
 
 keywords       = ''
 api_connection = twitter.Api(
